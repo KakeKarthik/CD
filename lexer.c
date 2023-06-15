@@ -5,17 +5,18 @@
 #define MAX_TOKEN_LEN 100
 
 enum TokenType {
-    NUMBER, ID, KEYWORD, SYMBOL, OPERATOR, ERROR,
+    NUMBER, ID, KEYWORD, SYMBOL, OPERATOR, ERROR, EOF_TOKEN
 };
 
 const char *TokenTypeStrings[] = {
-    "NUMBER","ID","KEYWORD","SYMBOL","OPERATOR","ERROR",
+    "NUMBER","ID","KEYWORD","SYMBOL","OPERATOR","ERROR","EOF_TOKEN"
 };
 
 struct Token {
     enum TokenType type;
     char value[MAX_TOKEN_LEN];
 };
+
 int isKeyword(const char *str) {
     static const char *keywords[] = {
         "auto","break","case","char","const","continue","default","do",
@@ -32,22 +33,25 @@ int isKeyword(const char *str) {
     return 0;
 }
 
-struct Token getNextToken(const char *input, int *start) {
+char input[1000];
+int start = 0;
+
+struct Token getNextToken() {
     int len = strlen(input);
     int lineIndex = 0;
-    char c = input[*start];
-    while (*start < len) {
+    char c = input[start];
+    while (start < len) {
         if (isspace(c)) {
-            (*start)++;
-            c = input[*start];
+            start++;
+            c = input[start];
             continue;
         }
         if (isdigit(c)) {
             struct Token t = {NUMBER, ""};
             do {
                 t.value[lineIndex++] = c;
-                (*start)++;
-                c = input[*start];
+                start++;
+                c = input[start];
             } while (isdigit(c));
             return t;
         }
@@ -55,8 +59,8 @@ struct Token getNextToken(const char *input, int *start) {
             struct Token t = {ID, ""};
             do {
                 t.value[lineIndex++] = c;
-                (*start)++;
-                c = input[*start];
+                start++;
+                c = input[start];
             } while (isalnum(c));
             t.type = isKeyword(t.value) ? KEYWORD : ID;
             return t;
@@ -64,25 +68,24 @@ struct Token getNextToken(const char *input, int *start) {
         if (ispunct(c)) {
             struct Token t = {SYMBOL, ""};
             t.value[lineIndex++] = c;
-            (*start)++;
+            start++;
             t.type = strchr("+-*/%><=", c) != NULL? OPERATOR : SYMBOL;
             return t;
         }
         struct Token t = {ERROR, ""};
         t.value[lineIndex++] = c;
-        (*start)++;
+        start++;
         return t;
     }
-    struct Token t = {EOF, ""};
+    struct Token t = {EOF_TOKEN, ""};
     return t;
 }
+
 int main() {
-    char input[1000];
     printf("Enter a string: ");
     scanf("%[^\n]s", input);
-    int start = 0;
     struct Token t;
-    while ((t = getNextToken(input, &start)).type != EOF) {
+    while ((t = getNextToken()).type != EOF_TOKEN) {
         printf("%s : %s\n", t.value, TokenTypeStrings[t.type]);
     }
     return 0;
