@@ -1,28 +1,30 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
- 
+
 void main () {
+    printf("Grammar:\n");
+    printf("--------\n");
+    printf(" e -> ta\n a -> +ta | ε\n t -> fb\n b -> *fb | ε\n f -> i | (e)\n\n");
+    
     char tab[5][6][5] = { 
         "ta", "@", "@", "ta", "@", "@", 
         "@", "+ta", "@", "@", "!", "!", 
         "fb","@", "@", "fb", "@", "@", 
         "@", "!", "*fb", "@", "!", "!", 
         "i", "@", "@", "(e)", "@", "@" };
-    char s[30], st[30];
+        
+    char s[30], st[30] = {'$', 'e', '\0'};
     printf("Enter the string : ");
     scanf("%s", s);
     strcat(s, "$");
-    st[0] = '$';
-    st[1] = 'e';
-    int st_i, s_i, s1, s2;
-    st_i = 1;
-    s_i = 0;
+    
+    int st_i = 1, s_i = 0;
     printf ("\nStack\t\tInput\n");
     printf("-----\t\t-----\n");
     printf("$e\t\t%s\n",s);
     while (st[st_i] != '$' || s[s_i] != '$') {
-        
+       int s1,s2;
     	switch (st[st_i]) {
             case 'e':s1=0;break;
             case 'a':s1=1;break;
@@ -42,12 +44,7 @@ void main () {
             default:s2=-1;
         }
             
-    	if(s1==-1 || s2==-1) {
-            printf("Failure\n");
-            exit(0);
-        }
-            
-    	if(tab[s1][s2]=="@") {
+    	if(s1==-1 || s2==-1 || tab[s1][s2]=="@") {
             printf("Failure\n");
             exit(0);
         }
@@ -58,20 +55,20 @@ void main () {
         } 
         
         else {
-            int j=strlen(tab[s1][s2]);
+            int len=strlen(tab[s1][s2]);
             char temp[20];
-            for(int k=0;tab[s1][s2][k]!='\0';k++){
-                temp[j-k-1]=tab[s1][s2][k];
+            for(int k=0;k<len;k++){
+                temp[len-k-1]=tab[s1][s2][k];
             } 
-            temp[j]='\0';
+            temp[len]='\0';
             st[st_i]='\0';
             strcat(st,temp);
             st_i=strlen(st)-1;
         }
         
     	printf("%s \t\t",st);
-    	for(int n=s_i;s[n]!='\0';n++)
-            	printf("%c",s[n]);
+    	for(int k=s_i;s[k]!='\0';k++)
+            	printf("%c",s[k]);
     	printf("\n");
     
         if(st[st_i]==s[s_i] && s[s_i]!='$') {
@@ -83,3 +80,37 @@ void main () {
     printf("Success\n");
 }
 
+/*
+OUTPUT :
+--------------
+Grammar:
+--------
+ e -> ta
+ a -> +ta | ε
+ t -> fb
+ b -> *fb | ε
+ f -> i | (e)
+
+Enter the string : i*(i+i)
+Stack		Input
+-----		-----
+$e		i*(i+i)$
+$at 		i*(i+i)$
+$abf 		i*(i+i)$
+$abi 		i*(i+i)$
+$abf* 		*(i+i)$
+$ab)e( 		(i+i)$
+$ab)at 		i+i)$
+$ab)abf 		i+i)$
+$ab)abi 		i+i)$
+$ab)a 		+i)$
+$ab)at+ 		+i)$
+$ab)abf 		i)$
+$ab)abi 		i)$
+$ab)a 		)$
+$ab) 		)$
+$a 		$
+$ 		$
+Success
+
+*/
