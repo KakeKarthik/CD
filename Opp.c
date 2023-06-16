@@ -43,21 +43,21 @@ void main()
     while(i<=strlen(ip)) {
         for(k=0; k<n; k++) {
             if(stack[top]==ter[k])
-                col=k;
-            if(ip[i]==ter[k])
                 row=k;
+            if(ip[i]==ter[k])
+                col=k;
 
         }
         if((stack[top]=='$')&&(ip[i]=='$')) {
             printf("String is accepted");
             break;
-        } else if((opt[col][row][0]=='<')||(opt[col][row][0]=='=')) {
-            stack[++top]=opt[col][row][0];
+        } else if((opt[row][col][0]=='<')||(opt[row][col][0]=='=')) {
+            stack[++top]=opt[row][col][0];
             stack[++top]=ip[i];
             printf("Shift %c",ip[i]);
             i++;
         } else {
-            if(opt[col][row][0]=='>') {
+            if(opt[row][col][0]=='>') {
                 while(stack[top]!='<') {
                     --top;
                 }
