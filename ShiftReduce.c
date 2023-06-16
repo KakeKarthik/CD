@@ -5,7 +5,7 @@
 #include<ctype.h>
 #include<stdlib.h>
 
-int k=0,z=0,i=0,j=0,c=0;
+int z=0,i=0,j=0,c=0;
 char a[16],ac[20],stk[15],act[10];
 void check();
 
@@ -18,7 +18,7 @@ int main() {
       strcpy(act,"SHIFT->");
       printf("stack \t input \t action\n");
       printf("----- \t ----- \t ------\n");
-      for(k=0,i=0; j<c; k++,i++,j++) {
+      for(i=0, j=0; j<c; i++,j++) {
          if(a[j]=='i' && a[j+1]=='d') {
               stk[i]=a[j];
               stk[i+1]=a[j+1];
